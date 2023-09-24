@@ -76,8 +76,7 @@ window.onload = function() {
         });
 
         document.getElementById('start').addEventListener('click', function() {
-            drawLineToClosestVertice(dotX, dotY, polygon, ctx);
-            drawLineToFarthestVertice(dotX, dotY, polygon, ctx);
+            drawLineToRandomVertice(dotX, dotY, polygon, ctx);
         });
         
     }
@@ -112,72 +111,112 @@ function pointInPolygon(point, vs) {
     return inside;
 };
 
+// find a random vertice to the dot
+function drawLineToRandomVertice(dotX, dotY, shape, ctx) {
+    var randomPoint;
+
+    if (shape.type === 'circle') {
+        // Generate a random angle
+        var angle = Math.random() * 2 * Math.PI;
+        // Calculate the coordinates of the point on the circumference
+        var randomX = shape.centerX + shape.radius * Math.cos(angle);
+        var randomY = shape.centerY + shape.radius * Math.sin(angle);
+        randomPoint = [randomX, randomY];
+    } else {
+        // Select a random vertice
+        var randomIndex = Math.floor(Math.random() * shape.length);
+        randomPoint = shape[randomIndex];
+    }
+
+
+    placeDotInMiddle(dotX, dotY, randomPoint[0], randomPoint[1], ctx);
+}
+
+function placeDotInMiddle(dotX, dotY, verticeX, verticeY, ctx) {
+    // Calculate the coordinates of the middle point
+    var middleX = (dotX + verticeX) / 2;
+    var middleY = (dotY + verticeY) / 2;
+
+    // Draw the dot
+    ctx.beginPath();
+    ctx.arc(middleX, middleY, 0.1, 0, 2 * Math.PI); 
+    ctx.fillStyle = 'white';
+    ctx.fill();
+
+    drawLineToRandomVertice(middleX, middleY, polygon, ctx);
+}
+
+
 // find the closest vertice to the dot
-function drawLineToClosestVertice(dotX, dotY, shape, ctx) {
-    var closestPoint;
+// function drawLineToClosestVertice(dotX, dotY, shape, ctx) {
+//     var closestPoint;
 
-    if (shape.type === 'circle') {
-        // Calculate the angle from the center of the circle to the dot
-        var angle = Math.atan2(dotY - shape.centerY, dotX - shape.centerX);
-        // Calculate the coordinates of the point on the circumference
-        var closestX = shape.centerX + shape.radius * Math.cos(angle);
-        var closestY = shape.centerY + shape.radius * Math.sin(angle);
-        closestPoint = [closestX, closestY];
-    } else {
-        var closestDistance = Infinity;
+//     if (shape.type === 'circle') {
+//         // Calculate the angle from the center of the circle to the dot
+//         var angle = Math.atan2(dotY - shape.centerY, dotX - shape.centerX);
+//         // Calculate the coordinates of the point on the circumference
+//         var closestX = shape.centerX + shape.radius * Math.cos(angle);
+//         var closestY = shape.centerY + shape.radius * Math.sin(angle);
+//         closestPoint = [closestX, closestY];
+//     } else {
+//         var closestDistance = Infinity;
 
-        // Find the closest vertice
-        for (var i = 0; i < shape.length; i++) {
-            var dx = dotX - shape[i][0];
-            var dy = dotY - shape[i][1];
-            var distance = Math.sqrt(dx * dx + dy * dy);
+//         // Find the closest vertice
+//         for (var i = 0; i < shape.length; i++) {
+//             var dx = dotX - shape[i][0];
+//             var dy = dotY - shape[i][1];
+//             var distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestPoint = shape[i];
-            }
-        }
-    }
+//             if (distance < closestDistance) {
+//                 closestDistance = distance;
+//                 closestPoint = shape[i];
+//             }
+//         }
+//     }
 
-    // Draw a line from the dot to the closest point
-    ctx.beginPath();
-    ctx.moveTo(dotX, dotY);
-    ctx.lineTo(closestPoint[0], closestPoint[1]);
-    ctx.strokeStyle = 'white';
-    ctx.stroke();
-}
+//     // Draw a line from the dot to the closest point
+//     ctx.beginPath();
+//     ctx.moveTo(dotX, dotY);
+//     ctx.lineTo(closestPoint[0], closestPoint[1]);
+//     ctx.strokeStyle = 'white';
+//     ctx.stroke();
 
-function drawLineToFarthestVertice(dotX, dotY, shape, ctx) {
-    var farthestPoint;
+//     placeDotInMiddle(dotX, dotY, closestPoint[0], closestPoint[1], ctx);
+// }
 
-    if (shape.type === 'circle') {
-        // Calculate the angle from the center of the circle to the dot
-        var angle = Math.atan2(dotY - shape.centerY, dotX - shape.centerX);
-        // Calculate the coordinates of the point on the circumference
-        var farthestX = shape.centerX + shape.radius * Math.cos(angle + Math.PI);
-        var farthestY = shape.centerY + shape.radius * Math.sin(angle + Math.PI);
-        farthestPoint = [farthestX, farthestY];
-    } else {
-        var farthestDistance = 0;
+// //  find the farthest vertice to the dot
+// function drawLineToFarthestVertice(dotX, dotY, shape, ctx) {
+//     var farthestPoint;
 
-        // Find the farthest vertice
-        for (var i = 0; i < shape.length; i++) {
-            var dx = dotX - shape[i][0];
-            var dy = dotY - shape[i][1];
-            var distance = Math.sqrt(dx * dx + dy * dy);
+//     if (shape.type === 'circle') {
+//         // Calculate the angle from the center of the circle to the dot
+//         var angle = Math.atan2(dotY - shape.centerY, dotX - shape.centerX);
+//         // Calculate the coordinates of the point on the circumference
+//         var farthestX = shape.centerX + shape.radius * Math.cos(angle + Math.PI);
+//         var farthestY = shape.centerY + shape.radius * Math.sin(angle + Math.PI);
+//         farthestPoint = [farthestX, farthestY];
+//     } else {
+//         var farthestDistance = 0;
 
-            if (distance > farthestDistance) {
-                farthestDistance = distance;
-                farthestPoint = shape[i];
-            }
-        }
-    }
+//         // Find the farthest vertice
+//         for (var i = 0; i < shape.length; i++) {
+//             var dx = dotX - shape[i][0];
+//             var dy = dotY - shape[i][1];
+//             var distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Draw a line from the dot to the farthest point
-    ctx.beginPath();
-    ctx.moveTo(dotX, dotY);
-    ctx.lineTo(farthestPoint[0], farthestPoint[1]);
-    ctx.strokeStyle = 'white';
-    ctx.stroke();
-}
+//             if (distance > farthestDistance) {
+//                 farthestDistance = distance;
+//                 farthestPoint = shape[i];
+//             }
+//         }
+//     }
 
+//     // Draw a line from the dot to the farthest point
+//     ctx.beginPath();
+//     ctx.moveTo(dotX, dotY);
+//     ctx.lineTo(farthestPoint[0], farthestPoint[1]);
+//     ctx.strokeStyle = 'white';
+//     ctx.stroke();
+    
+//     placeDotInMiddle(dotX, dotY, farthestPoint[0], farthestPoint[1], ctx);
+// }
