@@ -77,6 +77,7 @@ window.onload = function() {
 
         document.getElementById('start').addEventListener('click', function() {
             drawLineToClosestVertice(dotX, dotY, polygon, ctx);
+            drawLineToFarthestVertice(dotX, dotY, polygon, ctx);
         });
         
     }
@@ -112,26 +113,71 @@ function pointInPolygon(point, vs) {
 };
 
 // find the closest vertice to the dot
-function drawLineToClosestVertice(dotX, dotY, polygon, ctx) {
-    var closestVertice;
-    var closestDistance = Infinity;
+function drawLineToClosestVertice(dotX, dotY, shape, ctx) {
+    var closestPoint;
 
-    // Find the closest vertice
-    for (var i = 0; i < polygon.length; i++) {
-        var dx = dotX - polygon[i][0];
-        var dy = dotY - polygon[i][1];
-        var distance = Math.sqrt(dx * dx + dy * dy);
+    if (shape.type === 'circle') {
+        // Calculate the angle from the center of the circle to the dot
+        var angle = Math.atan2(dotY - shape.centerY, dotX - shape.centerX);
+        // Calculate the coordinates of the point on the circumference
+        var closestX = shape.centerX + shape.radius * Math.cos(angle);
+        var closestY = shape.centerY + shape.radius * Math.sin(angle);
+        closestPoint = [closestX, closestY];
+    } else {
+        var closestDistance = Infinity;
 
-        if (distance < closestDistance) {
-            closestDistance = distance;
-            closestVertice = polygon[i];
+        // Find the closest vertice
+        for (var i = 0; i < shape.length; i++) {
+            var dx = dotX - shape[i][0];
+            var dy = dotY - shape[i][1];
+            var distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestPoint = shape[i];
+            }
         }
     }
 
-    // Draw a line from the dot to the closest vertice
+    // Draw a line from the dot to the closest point
     ctx.beginPath();
     ctx.moveTo(dotX, dotY);
-    ctx.lineTo(closestVertice[0], closestVertice[1]);
+    ctx.lineTo(closestPoint[0], closestPoint[1]);
     ctx.strokeStyle = 'white';
     ctx.stroke();
 }
+
+function drawLineToFarthestVertice(dotX, dotY, shape, ctx) {
+    var farthestPoint;
+
+    if (shape.type === 'circle') {
+        // Calculate the angle from the center of the circle to the dot
+        var angle = Math.atan2(dotY - shape.centerY, dotX - shape.centerX);
+        // Calculate the coordinates of the point on the circumference
+        var farthestX = shape.centerX + shape.radius * Math.cos(angle + Math.PI);
+        var farthestY = shape.centerY + shape.radius * Math.sin(angle + Math.PI);
+        farthestPoint = [farthestX, farthestY];
+    } else {
+        var farthestDistance = 0;
+
+        // Find the farthest vertice
+        for (var i = 0; i < shape.length; i++) {
+            var dx = dotX - shape[i][0];
+            var dy = dotY - shape[i][1];
+            var distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > farthestDistance) {
+                farthestDistance = distance;
+                farthestPoint = shape[i];
+            }
+        }
+    }
+
+    // Draw a line from the dot to the farthest point
+    ctx.beginPath();
+    ctx.moveTo(dotX, dotY);
+    ctx.lineTo(farthestPoint[0], farthestPoint[1]);
+    ctx.strokeStyle = 'white';
+    ctx.stroke();
+}
+
