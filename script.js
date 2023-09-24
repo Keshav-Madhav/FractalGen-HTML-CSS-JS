@@ -16,6 +16,8 @@ var size = 370;
 var polygon = [];
 var speed = 1;
 
+var colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FC0FC0', '#00FFFF', 'white', 'brown', 'grey'];
+
 window.onload = function() {
 
     var startAngle = 0;
@@ -121,15 +123,21 @@ function pointInPolygon(point, vs) {
 // find a random vertice to the dot
 function drawLineToRandomVertice(dotX, dotY, shape, ctx) {
     var randomPoint;
+    var color;
 
     if (shape.type === 'circle') {
         var angle = Math.random() * 2 * Math.PI;
         var randomX = shape.centerX + shape.radius * Math.cos(angle);
         var randomY = shape.centerY + shape.radius * Math.sin(angle);
         randomPoint = [randomX, randomY];
+        color = 'white'
     } else {
         var randomIndex = Math.floor(Math.random() * shape.length);
         randomPoint = shape[randomIndex];
+        color = colors[randomIndex];
+        if(randomIndex == shape.length - 1) {
+            color = colors[0];
+        }
     }
 
     // Clear the top canvas
@@ -139,26 +147,24 @@ function drawLineToRandomVertice(dotX, dotY, shape, ctx) {
     ctxTop.beginPath();
     ctxTop.moveTo(dotX, dotY);
     ctxTop.lineTo(randomPoint[0], randomPoint[1]);
-    ctxTop.strokeStyle = '#ffffff';
+    ctxTop.strokeStyle = color;
     ctxTop.stroke();
 
-    placeDotInMiddle(dotX, dotY, randomPoint[0], randomPoint[1], ctx);
+    placeDotInMiddle(dotX, dotY, randomPoint[0], randomPoint[1], ctx, color);
 }
 
-function placeDotInMiddle(dotX, dotY, verticeX, verticeY, ctx) {
+function placeDotInMiddle(dotX, dotY, verticeX, verticeY, ctx, color) {
     // Calculate the coordinates of the middle point
     var middleX = (dotX + verticeX) / 2;
     var middleY = (dotY + verticeY) / 2;
 
     // Draw the dot
     ctx.beginPath();
-    ctx.arc(middleX, middleY, 0.1, 0, 2 * Math.PI); 
-    ctx.fillStyle = 'white';
+    ctx.arc(middleX, middleY, 1, 0, 2 * Math.PI); 
+    ctx.fillStyle = `${color}60`;
     ctx.fill();
 
-    setTimeout(function() {
-        drawLineToRandomVertice(middleX, middleY, polygon, ctx);
-    }, speed);
+    drawLineToRandomVertice(middleX, middleY, polygon, ctx);
 }
 
 
