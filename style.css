@@ -22,3 +22,11 @@
     width: 50px;
     padding-left: 10px;
 }
+
+#start{
+    position: relative;
+    z-index: 1;
+    background-color: #222;
+    color: whitesmoke;
+    width: 50px;
+}
