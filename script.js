@@ -28,7 +28,7 @@ window.onload = function() {
         function drawPolygon() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
-            if (x == 0) {
+            if (x == 1) {
                 ctx.arc(centerX, centerY, size, 0, 2 * Math.PI);
                 polygon = {type: 'circle', centerX: centerX, centerY: centerY, radius: size};
                 console.log(polygon);
